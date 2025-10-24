@@ -1,0 +1,33 @@
+<div class="login-bg">
+  <div class="container">
+    <div class="row">
+      <div >
+        <div class="log-in panel">
+          <div class="panel-heading">
+            <h2>Log in</h2>
+          </div>
+
+          <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+            <%= f.error_notification  %>
+            <div class="panel-body">
+              <%= f.input :email,
+                required: false,
+                autofocus: true,
+                input_html: { autocomplete: "email" , class: "input-lg"} %>
+              <%= f.input :password,
+                required: false,
+                input_html: { autocomplete: "current-password", class: "input-lg" } %>
+              <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
+
+            </div>
+
+            <div class="form-actions">
+              <%= f.button :submit, "Log in", class: "btn-lg btn-info btn-block" %>
+            </div>
+          <% end %>
+          <%= link_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path %>
+          <%= link_to "Sign in with GitHub", user_github_omniauth_authorize_path %>
+        </div>
+      </div>
+    </div>
+  </div>

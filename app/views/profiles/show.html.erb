@@ -1,0 +1,124 @@
+<div class="posts-wrapper">
+  <div class="row profile-header">
+    <div class="col-md-6">
+      <div class="img-circle">
+        <% if @user.image.attached? %>
+          <%= image_tag(@user.image, class: "profile-image") %>
+        <%else %>
+          <%= image_tag(asset_path("avatarnew.png", class: "profile-image"))%>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="user-name-and-follow">
+        <h3 class="profile-user-name"><%= @user.user_name %></h3>
+        <span>
+          <% if @user == current_user %>
+            <%= link_to 'Edit Profile', edit_profile_path(@user.user_name), class: "btn btn-primary" %>
+          <% else %>
+            <%= csrf_meta_tag %>
+            <% if current_user_is_following(current_user.id, @user.id) %>
+              <button class="btn btn-danger" id="unfollow-button">Unfollow</button>
+
+            <% else%>
+              <button class="btn btn-primary" id="unfollow-button">Follow</button>
+            <% end %>
+          <% end %>
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between">
+        <p>
+          <%= pluralize @user.posts.count, 'post' %>
+        </p>
+        <p id="followers">
+          <%= pluralize @user.followers.count, 'follower' %>
+        </p>
+        <p>
+          <%= @user.following.count%> following
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container tab">
+  <button class="tablinks" onclick="openCity(event, 'posts')" id="defaultOpen">Posts</button>
+  <button class="tablinks" onclick="openCity(event, 'followers')">Followers</button>
+</div>
+<div id="posts" class=" container tabcontent">
+  <% if @posts%>
+    <% @posts.each do |post| %>
+      <%= render 'posts/post', post: post %>
+    <% end %>
+  <% end %>
+</div>
+
+<div>
+  <% if @followers %>
+    <h4>Followers</h4>
+    <% @followers.each do |follower| %>
+      <div class="follower-item">
+        <% if follower.image.attached? %>
+          <%= image_tag(follower.image, class: "follower-image") %>
+        <% else %>
+          <%= image_tag(asset_path("avatarnew.png"), class: "follower-image") %>
+        <% end %>
+        <%= link_to follower.user_name, profile_path(follower.user_name), class: "follower-username" %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @common_friends.any? %>
+    <h4>Common Friends</h4>
+    <% @common_friends.each do |friend| %>
+      <div class="follower-item">
+        <% if friend.image.attached? %>
+          <%= image_tag(friend.image, class: "follower-image") %>
+        <% else %>
+          <%= image_tag(asset_path("avatarnew.png"), class: "follower-image") %>
+        <% end %>
+        <%= link_to friend.user_name, profile_path(friend.user_name), class: "follower-username" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+<script type="text/javascript">
+
+  var openCity = (evt, cityName) => {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+  };
+  document.getElementById("defaultOpen").click();
+
+  var btn = document.getElementById('unfollow-button');
+  var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  btn.addEventListener('click', () => {
+      var btnText = btn.textContent === 'Unfollow' ? 'unfollow_user' : 'follow_user';
+      fetch(`/${document.querySelector('h3').textContent}/${btnText}`, {
+        method: "POST",
+        headers: {
+          'X-CSRF-Token': csrfToken
+        }
+        })
+      .then(r => r.json())
+      .then(d => {
+        console.log(d);
+        btn.classList.toggle('btn-primary');
+        btn.classList.toggle('btn-danger');
+        document.getElementById('followers').textContent = d.count === 1 ? `${d.count} follower` : `${d.count ? d.count : 0} followers` 
+        btn.textContent = btn.textContent === 'Unfollow' ? 'Follow' : 'Unfollow';
+      })
+      .catch(e => alert(e));
+    });
+</script>

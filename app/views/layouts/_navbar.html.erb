@@ -1,0 +1,84 @@
+
+<header>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <%= link_to "Fakebook", root_path, class: "navbar-brand" %>
+        <i class="fa-solid fa-user-group fa-2x" aria-hidden="true"></i>
+            
+      <div style="display: flex; align-items: center;">
+        <div class="dropdown me-2">
+          <a class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown" href="/" role="button" aria-expanded="false">
+            <% if user_signed_in? %>
+              <% if current_user.image.attached? %>
+                <%= image_tag(current_user.image, onerror: "this.src=/assets/images/avatarnew.png", style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+              <% else %>
+                <%= image_tag(asset_path("avatarnew.png"), style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+              <% end %>
+                <%= current_user.user_name %>
+            <% else %>
+              <%= image_tag(asset_path("avatarnew.png"), style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+            <% end %>
+          </a>
+        
+          <ul class="dropdown-menu">
+            <% if user_signed_in? %>
+            <li>
+              <%= link_to "Profile", profile_path(current_user.user_name), class: "dropdown-item" %>
+            </li>
+            <li>
+              <%= link_to 'Edit Account', edit_user_registration_path(current_user.user_name), class: "dropdown-item"%>
+            </li>
+            <li>
+              <%= link_to "Browse Posts", browse_posts_path, class: "dropdown-item" %>
+            </li>
+
+            <li>
+              <%= link_to "New Post", new_post_path, class: "dropdown-item"%>
+            </li>
+            <li class="nav-item">
+              <%= link_to "Logout", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item" %>
+            </li>
+          <% else %>
+            <li class="nav-item">
+              <%= link_to "Login", new_user_session_path, class: "dropdown-item"%>
+            </li>
+            <li class="nav-item">
+              <%= link_to "Register", new_user_registration_path, class: "dropdown-item"%>
+            </li>
+          <% end %>        
+          </ul>
+        </div>
+    <!---
+        <button class="navbar-toggler position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+          <% if user_signed_in? %>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+          <% end %>
+        </button>
+      </div>
+
+
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+            <% if user_signed_in? %>
+              Signed in as <strong><%= current_user.user_name %></strong>.
+            <% else %>
+              Not signed in.
+            <% end %>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+            </li>
+          </ul>
+        </div>
+      </div>
+      --->
+    </div>
+  </nav>
+</header>
+

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Fakebook" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <style>
+      body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font: normal 14px / 1.5 system-ui, Gotham Pro, Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
+* {
+  margin: 0;
+}
+
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+  font-size: 0.8rem;
+}
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #333;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #222;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #111;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.tabcontent {
+  animation: fadeEffect 1s; /* Fading effect takes 1 second */
+}
+
+/* Go from zero to full opacity */
+@keyframes fadeEffect {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+h1, h2, h3, h3, h4, h5, h6 {
+  text-wrap: balance;
+  font-size: 0.8rem;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+
+  cursor: pointer;
+}
+
+#root, #_next {
+  isolation: isolate;
+}
+
+      html {
+        height: 100%;
+      }
+      body {
+        height: 100%;
+        font-family: proxima-nova, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      }
+      .alert {
+        margin-bottom: 0px;
+      }
+      .notification-index-list {
+        margin-top: 5em;
+        list-style: none;
+        li {
+          margin-top: 1em;
+          background-color: white;
+          padding: 1em;
+        }
+      }
+      .follow-button {
+        text-transform: uppercase;
+        border-color: #4090DB;
+        color: #4090DB;
+        margin-left: 20px;
+        &:visited, &:focus, &:hover {
+          border-color: #2D6396;
+          color: #2D6396;
+        }
+      }
+
+      .unfollow-button {
+        text-transform: uppercase;
+        border-color: #66BD2B;
+        background-color: #66BD2B;
+        color: white;
+        margin-left: 20px;
+        &:visited, &:focus, &:hover {
+          border-color: #47821F;
+          background-color: #47821F;
+          color: white
+        }
+      }
+      .notification-dropdown {
+        margin-top: 10px;
+        button {
+          border: none;
+        }
+      }
+      .profile-header {
+        padding: 1.25rem 0;
+      }
+
+      .profile-image {
+        margin: 1.25rem auto;
+        height: 9.5rem;
+        width: 9.5rem;
+        aspect-ratio: 1; 
+        object-fit: cover;
+        border-radius: 50%  
+      }
+
+      .user-name-and-follow, .profile-user-name {
+        display: inline;
+      }
+
+      .edit-button {
+        border-color: #818488;
+        color: #818488;
+        margin-left: 1.25rem;
+      }
+
+      .profile-bio {
+        margin-top: 1.25rem;
+      }
+
+      .comments {
+        .paginator {
+          margin: 0.5rem;
+          .more-comments {
+            color: #A5A7AA;
+          }
+        }
+      }
+
+      #paginator {
+        color: #4090DB;
+        height: 7.5rem;
+        width: 7.5rem;
+        margin: 3.75rem auto 2.5rem;
+        position: relative;
+        display: table;
+        border: 2px solid #4090DB;
+        border-radius: 50%;
+        :hover {
+          border: 1px solid #2D6DA8;
+          border-radius: 50%;
+        }
+      }
+      #load_more {
+        display: table-cell;
+        font-size: 0.75rem;
+        padding: 0px 9px;
+        vertical-align: middle;
+        text-decoration: none;
+        a :hover {
+          color: #2D6DA8;
+        }
+      }
+      .registration-bg, .login-bg {
+        padding-top: 4em;
+        height: 100%;
+        background-image: url('<%= asset_path("signup.jpg") %>');
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+      .log-in {
+        margin-right: auto;
+        margin-left: auto;
+        text-align: center;
+        border: none;
+      }
+      .panel {
+        border-radius: 8px;
+
+      }
+      .panel-heading {
+        h2 {
+          text-align: center;
+        }
+      }
+      .navbar-brand {
+        color: #125688;
+      }
+      .navbar-default {
+        background-color: #fff;
+        height: 3.375rem;
+        .navbar-nav li a {
+          color: #125668;
+        }
+      }
+
+      .navbar-container {
+        max-width: 70%;
+        margin: 0 auto;
+      }
+      .posts-wrapper {
+        padding-top: 2.5rem;
+        margin: 0 auto;
+        max-width: 40.125rem;
+        width: 100%;
+      }
+
+      .post {
+        background-color: #fff;
+        border: 1px solid #edeeee;
+        border-radius: 3px;
+        margin-bottom: 3.75rem;
+        .post-head {
+          flex-direction: row;
+          height: 4rem;
+          padding: 1.5rem auto 1.5rem 1.5rem;
+          color: #125688;
+          font-size: 0.9375rem;
+          line-height: 1.125rem;
+          .username, .time-ago {
+            display: inline;
+          }
+
+          .username {
+            font-weight: 500;
+          }
+          .time-ago {
+            color: #A5A7AA;
+            float: right;
+          }
+        }
+        .image {
+          border-bottom: 1px solid #eeefef;
+          border-top: 1px solid #eeefef;
+          width: 100%;
+          aspect-ratio: 1; 
+          object-fit: cover;
+        }
+      }
+
+      .post-head {
+        height: 4rem;
+        padding: 0.875rem 1.25rem;
+        color: #125668;
+        font-size: 0.9rem;
+        line-height: 1.15rem;
+        .thumbnail {
+
+        }
+        .name {
+          display: block;
+        }
+      }
+
+      .image {
+        border-bottom: 1px solid #eeefef;
+        border-top: 1px solid #eeefef;
+      }
+
+      .form-wrapper {
+        width: 60%;
+        margin: 1.25rem auto;
+        background-color: #fff;
+        padding: 2.5rem;
+        border: 1px solid #eeefef;
+        border-radius: 3px;
+      }
+
+      .edit-links {
+        margin-top: 1.25rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .post-bottom {
+        .user-name, .comment-content {
+          display: inline;
+        }
+        .user-name {
+          font-weight: 500;
+          margin-right: 0.3em;
+          color: #125688;
+          font-size: 0.9375rem;
+        }
+        .comment {
+          margin-top: 0.4375rem;
+          .user-name {
+            font-weight: 500;
+            margin-right: 0.3rem;
+          }
+
+          .delete-comment-icon {
+            float: right;
+            color: #515151;
+          }
+        }
+        margin-bottom: 0.4375rem;
+        padding: 1.5rem 0.625rem 1.5rem 1.5rem;
+        font-size: 0.9375rem;
+        line-height: 1.125rem;
+      }
+
+      .comment-content {
+        border: medium none;
+        width: 100%;
+        color: #4B4F54;
+      }
+
+      .comment-like-form {
+        padding-top: 1.5rem;
+        margin: 0.8125rem auto 1.5rem 1.5rem;
+        min-height: 4.25rem;
+        align-items: center;
+        border-top: 1px solid #EEEFEF;
+        flex-direction: row;
+        justify-content: center;
+      }
+      .navbar, .alert {
+        margin-bottom: 0px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <%= render "layouts/navbar" %>
+    <div class="container">
+      <% flash.each do |name, msg|  %>
+        <%= content_tag :div, msg, class: [:alert, alert_for(name)] %>
+      <% end %>
+    </div>
+    <%= yield %>
+  </body>
+</html>

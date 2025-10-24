@@ -1,0 +1,96 @@
+<div class="posts-wrapper row">
+  <div class="post" style="display: flex; flex-direction: column">
+    <div class="post-head">
+      <div class="username">
+        <% if post.user.image.attached? %>
+            <%= image_tag(post.user.image, onerror: "this.src=/assets/images/avatarnew.png", style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+        <% else %>
+            <%= image_tag(asset_path("avatarnew.png"), style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+        <% end %>
+      <%= link_to post.user.user_name, profile_path(post.user.user_name) %></div>
+      <div class="time-ago"><%= time_ago_in_words post.created_at %> ago</div>
+    </div>
+    <div class="post-body">
+      <div class="post-text">
+        <%= simple_format(h(post.text)) %>
+      </div>
+    <% if post.images.attached? %>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;" class="post-images">
+        <% post.images.each do |image| %>
+          <div class="post-image">
+            <%= image_tag image, style: "max-width: 100%; height: 100%; margin-top: 10px;" %>
+          </div>
+        <% end %>
+      </div>
+    <% end%>
+    <div class="post-bottom">
+      
+        <div class="comment" id="comments_<%= post.id %>">
+          <% if post.comments.count != 0 %>
+            <%= render post.comments.first(4), post: post  %>
+            <% unless post.comments.count <= 4 %>
+              <div class="paginator" id="comments-paginator-<%= post.id %>">
+                <%= link_to "view all #{post.comments.count} comments", post_comments_path(post), remote: true, class: 'more-comments', id: "more-comments_#{post.id}", data: {post_id: "#{post.id}", type: "html",  value: "#{post.comments.count}"} %>
+            <% end %>
+          <% end %>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+          <% if current_user == post.user %>
+            <%= link_to "View and Edit Post", post_path(post)%>
+          <% else%>
+            <a></a>
+          <% end %>
+          <div style="text-align: right;" class="likes-count" id="likes-count-<%= post.id %>">
+            <%= pluralize post.likes.count, 'like' %>
+          </div>
+        </div>
+      <div class="comment-like-form row">
+        <div class="like-button col-sm-1">
+          <% if current_user %>
+            <% like = current_user.likes.find_by(post: post) %>
+            <% if like.nil? %>
+              <a id="like-<%= post.id %>" class="like">
+                <input hidden id="like-post-<%= post.id%>" value="0">    
+                <%= csrf_meta_tag %>
+                <i class="far fa-heart"></i>
+              </a>
+            <% else %>
+              <a id="like-<%= post.id %>" class="dislike">
+                <input hidden id="like-post-<%= post.id%>" value="<%= like.id %>">    
+                <%= csrf_meta_tag %>
+                <i class="fas fa-heart"></i>
+              </a>
+            <% end %>
+          <% end %>
+          <script>
+            document.getElementById('like-<%= post.id%>').addEventListener('click', () => {
+              let id = document.getElementById('like-post-<%= post.id%>').value
+              let [method, path] = document.getElementById('like-<%= post.id%>').className === 'like' ?   ["POST",`<%= post_likes_path(post)%>`] : ["DELETE", `/posts/<%= post.id %>/likes/${id}`]
+              fetch(`${path}`, {
+                method: method,
+                headers: {
+                  'X-CSRF-Token': document.getElementById('like-<%= post.id %>').querySelector('meta[name="csrf-token"]').content
+                }
+              })
+              .then(r => r.json())
+              .then(d => {
+                document.getElementById('like-<%= post.id %>').classList.toggle('like');
+                document.getElementById('like-<%= post.id %>').classList.toggle('dislike');
+                document.getElementById('like-<%= post.id %>').querySelector('i').classList.toggle('fas');
+                document.getElementById('like-<%= post.id %>').querySelector('i').classList.toggle('far');
+                document.getElementById('likes-count-<%= post.id %>').textContent =  d.count === 1 ? `1 like` : `${d.count ? d.count : 0} likes`
+                document.getElementById('like-post-<%= post.id%>').value = d.id;
+              })
+              .catch(e => console.log(e))
+              })
+          </script>
+        </div>
+        <div class="comment-form col-sm-11">
+          <%= form_for([post, post.comments.build], remote: true) do |f| %>
+            <%= f.text_field :content, placeholder: 'Add a comment...', id: "comment_content_#{post.id}", class: "form-control" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

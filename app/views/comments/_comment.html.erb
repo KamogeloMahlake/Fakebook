@@ -1,0 +1,37 @@
+<div id="comment-<%= comment.id %>">
+  <div class="user-name">
+    <% if comment.user %>
+      <%= link_to comment.user.user_name, profile_path(comment.user.user_name) %>
+    <% end %>
+  </div>
+  <div class="comment-content">
+    <%= comment.content %>
+    <% if comment.user == current_user %>
+      <a id="comment-delete-<%= comment.id %>">
+          <%= csrf_meta_tag %>
+        <i class="fa fa-trash"></i>
+      </a>
+    <% end %> 
+  </div>
+</div>
+
+<% if comment.user == current_user %>
+
+<script>
+  document.getElementById('comment-delete-<%= comment.id %>').addEventListener('click', () => {
+    fetch('<%= post_comment_path(post, comment)%>', { 
+      method: "DELETE",
+      headers: {
+        'X-CSRF-Token': document.getElementById('comment-delete-<%= comment.id %>').querySelector('meta[name="csrf-token"]').content
+      }
+    })
+    .then(r => r.json())
+    .then(d => {
+      let comment = document.getElementById('comment-<%= comment.id %>');
+      comment.innerHtml = "";
+      comment.style.display = 'none';
+    })
+    .catch(e => console.log(e))
+  })
+</script>
+<% end %>
