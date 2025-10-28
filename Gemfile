@@ -80,3 +80,4 @@ gem "dotenv-rails", "~> 3.1"
 
 gem "omniauth-github", "~> 1.4"
 
+gem "letter_opener", "~> 1.0", group: :development

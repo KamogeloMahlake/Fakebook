@@ -1,0 +1,4 @@
+<h1 style="text-align: center;"><strong><%= @user.user_name %></strong>'s Following</h1>
+<% if @following %>
+    <%= render "relationships/users", users: @following%>
+<% end %>

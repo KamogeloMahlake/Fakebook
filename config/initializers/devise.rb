@@ -312,4 +312,7 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
   config.omniauth :google_oauth2, ENV["GOOGLE_CLIENT_ID"], ENV["GOOGLE_CLIENT_SECRET"], { strategy_class: OmniAuth::Strategies::GoogleOAuth2, token_params: { parse: :json } }
   config.omniauth :github, ENV["GITHUB_CLIENT_ID"], ENV["GITHUB_CLIENT_SECRET"], scope: "user,public_repo"
+
+  config.mailer = "UserMailer"
+  config.mailer_sender = "from@example.com"
 end

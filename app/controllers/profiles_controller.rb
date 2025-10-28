@@ -3,10 +3,15 @@ class ProfilesController < ApplicationController
   before_action :owned_profile, only: [ :edit, :update ]
   before_action :authenticate_user!
 
+  def followers
+    @followers = @user.followers
+  end
+
+  def following
+    @following = @user.following
+  end
   def show
     @posts = @user.posts.all()
-    @followers = @user.followers
-    @common_friends = @followers & current_user.followers
   end
 
   def edit

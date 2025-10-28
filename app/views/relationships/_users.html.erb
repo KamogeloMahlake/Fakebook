@@ -1,0 +1,5 @@
+<% users.each do |user| %>
+  <% unless user == current_user %>
+    <%= render 'relationships/user', user: user %>
+  <% end %>
+<% end %>

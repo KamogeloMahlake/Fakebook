@@ -1,4 +1,7 @@
 class RelationshipsController < ApplicationController
+  def unfollowed_users
+    @users = User.all - current_user.following
+  end
   def follow_user
     @user = User.find_by! user_name: params[:user_name]
     if current_user.follow @user.id

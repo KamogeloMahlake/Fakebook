@@ -10,13 +10,13 @@
           <a class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown" href="/" role="button" aria-expanded="false">
             <% if user_signed_in? %>
               <% if current_user.image.attached? %>
-                <%= image_tag(current_user.image, onerror: "this.src=/assets/images/avatarnew.png", style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+                <%= image_tag(current_user.image, onerror: "this.src=/assets/images/avatarnew.png", loading: :lazy , style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
               <% else %>
-                <%= image_tag(asset_path("avatarnew.png"), style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+                <%= image_tag(asset_path("avatarnew.png"), loading: :lazy , style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
               <% end %>
                 <%= current_user.user_name %>
             <% else %>
-              <%= image_tag(asset_path("avatarnew.png"), style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;")%>
+              <%= image_tag(asset_path("avatarnew.png"), style: "display: inline-block; width: 2.1875rem; height: 2.1875rem; border-radius: 50%; aspect-ratio: 1; object-fit: cover;",  loading: :lazy )%>
             <% end %>
           </a>
         
@@ -27,6 +27,15 @@
             </li>
             <li>
               <%= link_to 'Edit Account', edit_user_registration_path(current_user.user_name), class: "dropdown-item"%>
+            </li>
+            <li>
+              <%= link_to "Followers", followers_path(current_user.user_name), class: "dropdown-item" %>
+            </li>
+            <li>
+              <%= link_to "Following", following_path(current_user.user_name), class: "dropdown-item" %>
+            </li>
+            <li>
+              <%= link_to "More Users", unfollowed_users_path(current_user.user_name), class: "dropdown-item" %>
             </li>
             <li>
               <%= link_to "Browse Posts", browse_posts_path, class: "dropdown-item" %>
