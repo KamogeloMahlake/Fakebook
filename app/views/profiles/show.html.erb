@@ -13,7 +13,8 @@
     </div>
 
     <div class="col-md-6">
-      <div class="user-name-and-follow">
+
+      <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: space-between">
         <span>
           <% if @user == current_user %>
             <%= link_to 'Edit Profile', edit_profile_path(@user.user_name), class: "btn btn-primary" %>
@@ -28,7 +29,9 @@
           <% end %>
         </span>
       </div>
-
+      <div>
+        <%= @user.bio %>
+      </div>
       <div style="display: flex; justify-content: space-between">
         <p>
           <%= pluralize @user.posts.count, 'post' %>
@@ -45,6 +48,7 @@
     </div>
   </div>
 </div>
+
 <div>
   <div>
     <% if @posts%>
@@ -54,3 +58,25 @@
     <% end %>
   </div>
 </div>
+<% unless current_user == @user %>
+<script type="text/javascript">
+    document.getElementById("unfollow-button").addEventListener('click', () => {
+        let btnText = document.getElementById("unfollow-button").textContent === "Unfollow" ? "unfollow_user" : "follow_user";
+        fetch(`/<%= @user.user_name %>/${btnText}`, {
+            method: "POST",
+            headers: {
+                'X-CSRF-Token': document.getElementById("unfollow-button").parentElement.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(r => r.json())
+        .then(d => {
+            console.log(d);
+            document.getElementById("unfollow-button").classList.toggle('btn-primary');
+            document.getElementById("unfollow-button").classList.toggle('btn-danger');
+            document.getElementById("unfollow-button").textContent = document.getElementById("unfollow-button").textContent === "Unfollow" ? 'Follow' : 'Unfollow';
+            document.getElementById('followers').textContent = d.count === 1 ? `${d.count} follower` : `${d.count ? d.count : 0} followers`
+
+        })
+    })
+</script>
+<% end %>
